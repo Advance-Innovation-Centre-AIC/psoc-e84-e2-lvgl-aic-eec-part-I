@@ -727,11 +727,14 @@ bool aic_capsense_read(aic_capsense_data_t *data)
         return false;
     }
 
-    /* DEBUG: Print raw I2C buffer (every 50 reads to avoid spam) */
-    static uint32_t debug_count = 0;
-    if ((debug_count++ % 50) == 0) {
+    /* DEBUG: Print raw I2C buffer when values change */
+    static uint8_t prev_buf[3] = {0xFF, 0xFF, 0xFF};
+    if (buffer[0] != prev_buf[0] || buffer[1] != prev_buf[1] || buffer[2] != prev_buf[2]) {
         printf("[I2C RAW] buf[0]=0x%02X buf[1]=0x%02X buf[2]=0x%02X\r\n",
                buffer[0], buffer[1], buffer[2]);
+        prev_buf[0] = buffer[0];
+        prev_buf[1] = buffer[1];
+        prev_buf[2] = buffer[2];
     }
 
     /* Parse CAPSENSE data - exactly like BLE example
