@@ -1,6 +1,6 @@
-# AIC-EEC: Embedded C for IoT - PSoC Edge E84
+# AIC-EEC: Embedded Systems and IoT Development - PSoC Edge E84
 
-LVGL-based course examples for **Embedded C for IoT** class, Burapha University.
+LVGL-based course examples for **Embedded Systems and IoT Development**, Department of Electrical Engineering, Faculty of Engineering, Burapha University.
 
 Runs on **PSoC Edge E84 Evaluation Kit** with Waveshare 4.3" DSI display (800x480).
 
@@ -34,10 +34,6 @@ AIC-EEC_psoc-e84-e2-lvgl-bill/
 │   ├── aic-eec/              AIC-EEC library (GPIO, Sensors, etc.)
 │   ├── ipc/                  IPC communication (CM55 side)
 │   ├── part1/                Part 1: LVGL Basics + GPIO
-│   ├── part2/                Part 2: Sensor Visualization
-│   ├── part3/                Part 3: Oscilloscope & Signal Processing
-│   ├── part4/                Part 4: IPC, Logging, Event Bus
-│   ├── part5/                Part 5: WiFi Manager & IoT
 │   ├── demo/                 LVGL demo image assets
 │   └── lvgl_patches/         LVGL library patches
 ├── shared/                   Shared IPC headers (CM33 <-> CM55)
@@ -52,7 +48,7 @@ AIC-EEC_psoc-e84-e2-lvgl-bill/
 Edit `proj_cm55/example_selector.h`:
 
 ```c
-#define SELECTED_PART       1    // Part (1-5) or Demo ('A','B','C')
+#define SELECTED_PART       1    // Part (1) or Demo ('A','B','C')
 #define SELECTED_EXAMPLE    1    // Example number (ignored for demos)
 ```
 
@@ -82,7 +78,9 @@ make program
 
 ## Examples
 
-### Part 1: LVGL Basics + GPIO
+### Part 1: LVGL Basics + GPIO (11 Examples)
+
+**Section I — UI Only**
 
 | # | Example | Description |
 |---|---------|-------------|
@@ -91,68 +89,17 @@ make program
 | 3 | LED Control | LED Widget, Slider, Brightness |
 | 4 | Switch Toggle | Switch, State Check |
 | 5 | GPIO Dashboard | Layout, Multiple Widgets |
+
+**Section II — Hardware Integration**
+
+| # | Example | Description |
+|---|---------|-------------|
 | 6 | [HW] LED Control | Hardware LED (3 LEDs) |
 | 7 | [HW] Button Status | Hardware Button Read |
 | 8 | [HW] ADC Display | Potentiometer ADC |
 | 9 | [HW] GPIO Dashboard | Full Hardware Dashboard |
 | 10 | [HW] CAPSENSE Mockup | CAPSENSE UI Mockup |
 | 11 | [HW] CAPSENSE | Real CAPSENSE Hardware (requires firmware, see below) |
-
-### Part 2: Sensor Visualization
-
-| # | Example | Description |
-|---|---------|-------------|
-| 1 | Slider & Bar | ADC Visualization |
-| 2 | Arc Gauge | Circular Gauge |
-| 3 | Chart Time-Series | Accelerometer Chart |
-| 4 | Scale Temperature | Temperature Gauge |
-| 5 | Sensor Dashboard | TabView (IMU + ADC) |
-| 6 | Chart Dashboard | Bar/Area/Scatter/Line |
-| 7 | [HW] IMU Display | Real IMU Visualization |
-| 8 | [HW] Sensor Dashboard | Real Sensor Dashboard |
-| 9 | [HW] Arc Gauge | Real Arc (Potentiometer) |
-| 10 | [HW] Scale Gauge | Real Scale (Potentiometer) |
-| 11 | [HW] Chart Dashboard | Real Chart (IMU) |
-
-### Part 3: Oscilloscope & Signal Processing
-
-| # | Example | Description |
-|---|---------|-------------|
-| 1 | Waveform Generator | Square/Sine/Triangle/Sawtooth |
-| 2 | Noise Generator | White Noise Display |
-| 3 | Audio Waveform | I2S Audio Visualization |
-| 4 | Mic Visualizer | PDM Microphone Display |
-| 5 | Oscilloscope UI | Full Scope Interface |
-| 6 | Spectrum Analyzer | FFT Frequency Display |
-| 7 | [HW] Custom Panel Scope | Maximum Chart Size |
-| 8 | [HW] Hardware Scope | Potentiometer + LED3 |
-
-### Part 4: IPC, Logging, Event Bus
-
-| # | Example | Description |
-|---|---------|-------------|
-| 1 | IPC Ping Test | IPC Ping/Pong |
-| 2 | Logging System | Remote Logging |
-| 3 | IPC Sensor Data | Sensor Data via IPC |
-| 4 | Event Bus | Event-driven Architecture |
-| 5 | [HW] IPC LED | LED Control via IPC |
-| 6 | [HW] IPC Button | Button Events via IPC |
-| 7 | [HW] IPC Dashboard | Full IPC Dashboard |
-| 8 | [HW] Advanced | Combined Features |
-| 9 | [HW] CAPSENSE IPC | CAPSENSE via IPC |
-
-### Part 5: WiFi Manager & IoT
-
-| # | Example | Description |
-|---|---------|-------------|
-| 1 | WiFi Network List | List Widget, Network Data |
-| 2 | WiFi Connect | Connect/Disconnect Flow |
-| 3 | TCP/IP Info | Network Information |
-| 4 | Hardware Info | System Information |
-| 5 | [HW] WiFi Manager | Full WiFi Manager (macOS Style) |
-| 6 | [HW] WiFi Status | Status Dashboard |
-| 7 | [HW] IoT Dashboard | IoT Overview |
-| 8 | [HW] MQTT Preview | MQTT UI Preview |
 
 > `[HW]` = requires hardware peripherals (LEDs, buttons, sensors, IPC)
 
@@ -266,4 +213,4 @@ PSoC Edge E84 application is blocking the I2C bus. Run `make erase` first, then 
 
 ---
 
-(C) 2026 BiiL - Embedded C for IoT, Burapha University
+(C) 2026 BiiL - Embedded Systems and IoT Development, Burapha University
