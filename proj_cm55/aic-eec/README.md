@@ -2,9 +2,9 @@
 
 > **Hardware Abstraction Layer for PSoC Edge E84 Evaluation Kit**
 >
-> Developed by **Assoc. Prof. Wiroon Sriborrirux**
+> Developed by **Assoc. Prof. Wiroon Sriborrirux** (รศ.วิรุฬห์ ศรีบริรักษ์)
 >
-> Embedded Systems Engineering, Faculty of Engineering, Burapha University
+> Department of Electrical Engineering, Faculty of Engineering, Burapha University
 >
 > Contact: wiroon@eng.buu.ac.th
 
@@ -12,7 +12,7 @@
 
 ## Overview
 
-AIC-EEC SDK เป็น Hardware Abstraction Layer (HAL) ที่พัฒนาขึ้นเพื่อใช้ในวิชา "Embedded C for IoT" โดยมีวัตถุประสงค์เพื่อ:
+AIC-EEC SDK เป็น Hardware Abstraction Layer (HAL) ที่พัฒนาขึ้นสำหรับ **Embedded Systems and IoT Development** โดยมีวัตถุประสงค์เพื่อ:
 
 1. **Abstraction** - ซ่อนความซับซ้อนของ Hardware Driver และ HAL ของ Infineon
 2. **Consistency** - ใช้ API รูปแบบเดียวกันทั้งโปรเจค
@@ -27,6 +27,12 @@ AIC-EEC SDK เป็น Hardware Abstraction Layer (HAL) ที่พัฒน�
 aic-eec/
 ├── aic-eec.h          # Main header - UI Components (Footer, Header, Logo)
 ├── aic-eec.c          # Common utilities implementation
+├── aic_layout.h       # Layout Helpers - Flexbox row/col, card, gauge, progress bar
+├── aic_layout.c       # Layout implementation + color palette + dark theme
+├── aic_event.h        # Event Bus - Publish-subscribe for sensor/button/system events
+├── aic_event.c        # Event bus implementation (FreeRTOS queue)
+├── aic_log.h          # Logging System - Levels, printf + IPC output
+├── aic_log.c          # Logging implementation (FreeRTOS queue)
 ├── gpio.h             # GPIO API - LED, Button, PWM
 ├── gpio.c             # GPIO implementation
 ├── sensors.h          # Sensor API - ADC, IMU, CAPSENSE
@@ -88,7 +94,7 @@ Provides common UI elements for all examples including footer, header, and styli
 ### Configuration
 
 ```c
-#define AIC_COPYRIGHT_TEXT   "(C) 2026 AIC-EEC.com (Embedded Systems Engineering, Burapha University)"
+#define AIC_COPYRIGHT_TEXT   "(C) 2026 AIC-EEC.com and BiiL Centre, Burapha University"
 #define AIC_COPYRIGHT_COLOR  0x666666
 #define AIC_FOOTER_Y_OFFSET  (-5)
 
@@ -495,6 +501,229 @@ ma_filter_3axis_update(&imu_filter, ax, ay, az, &ax_f, &ay_f, &az_f);
 
 ---
 
+## Module 7: aic_layout.h - UI Layout Helpers
+
+### Description
+
+Flexbox-style layout helpers for LVGL. Reduces boilerplate code and provides consistent spacing, alignment, and common UI patterns.
+
+### Color Palette
+
+| Macro | Hex | Usage |
+|-------|-----|-------|
+| `AIC_COLOR_BG_DARK` | `#16213e` | Screen background |
+| `AIC_COLOR_BG_CARD` | `#1f4068` | Card background |
+| `AIC_COLOR_PRIMARY` | `#00d4ff` | Primary accent |
+| `AIC_COLOR_SECONDARY` | `#ff6b6b` | Secondary accent |
+| `AIC_COLOR_SUCCESS` | `#4ade80` | Success state |
+| `AIC_COLOR_WARNING` | `#fbbf24` | Warning state |
+| `AIC_COLOR_ERROR` | `#ef4444` | Error state |
+| `AIC_COLOR_TEXT` | `#ffffff` | Normal text |
+| `AIC_COLOR_TEXT_DIM` | `#94a3b8` | Dimmed text |
+
+### Layout Containers
+
+| Function | Description |
+|----------|-------------|
+| `aic_row_create(parent)` | Horizontal flex row |
+| `aic_col_create(parent)` | Vertical flex column |
+| `aic_spacer_create(parent)` | Flexible spacer (fills space) |
+| `aic_center_create(parent)` | Centered container |
+
+### Common Components
+
+| Function | Description |
+|----------|-------------|
+| `aic_card_create(parent, title)` | Card with title and content area |
+| `aic_value_display_create(parent, label)` | Label + value pair |
+| `aic_status_indicator_create(parent, label, state)` | LED status indicator |
+| `aic_icon_button_create(parent, icon, text)` | Button with icon |
+| `aic_section_create(parent, title)` | Section with title |
+| `aic_divider_create(parent)` | Horizontal divider |
+
+### Data Display
+
+| Function | Description |
+|----------|-------------|
+| `aic_gauge_create(parent, label, min, max, initial)` | Arc gauge |
+| `aic_progress_bar_create(parent, label)` | Progress bar |
+| `aic_xyz_display_create(parent, title, labels)` | XYZ display for IMU |
+
+### Screen Helpers
+
+| Function | Description |
+|----------|-------------|
+| `aic_apply_dark_theme(scr)` | Apply dark theme (NULL = active screen) |
+| `aic_create_footer(parent)` | Default copyright footer |
+| `aic_create_footer_custom(parent, text, color)` | Custom footer |
+| `aic_create_header(parent, title)` | Header with title |
+
+### Layout Properties
+
+| Function | Description |
+|----------|-------------|
+| `aic_flex_grow(obj, grow)` | Set flex grow factor |
+| `aic_pad(obj, pad)` | Set padding (all sides) |
+| `aic_pad_all(obj, t, r, b, l)` | Set padding (individual) |
+| `aic_gap(obj, gap)` | Set gap between children |
+| `aic_full_width(obj)` | Full width of parent |
+| `aic_full_size(obj)` | Full size of parent |
+
+### Example
+
+```c
+#include "aic_layout.h"
+
+aic_apply_dark_theme(NULL);
+lv_obj_t *col = aic_col_create(lv_screen_active());
+aic_create_header(col, "Sensor Dashboard");
+
+lv_obj_t *row = aic_row_create(col);
+lv_obj_t *card1 = aic_card_create(row, "Temperature");
+lv_obj_t *val = aic_value_display_create(card1, "Temp:");
+lv_label_set_text(val, "25.3 C");
+
+lv_obj_t *bar = aic_progress_bar_create(col, "CPU Load");
+lv_bar_set_value(bar, 65, LV_ANIM_ON);
+
+aic_create_footer(col);
+```
+
+---
+
+## Module 8: aic_event.h - Event Bus
+
+### Description
+
+Publish-subscribe event system for decoupling sensor updates from UI. Uses FreeRTOS queue for thread-safe event delivery.
+
+### Event Types
+
+| Group | Events |
+|-------|--------|
+| **Sensor** (1-20) | `AIC_EVENT_IMU_UPDATE`, `ADC_UPDATE`, `TEMP_UPDATE`, `HUMIDITY_UPDATE`, `PRESSURE_UPDATE` |
+| **Input** (21-40) | `AIC_EVENT_BUTTON_PRESS`, `BUTTON_RELEASE`, `BUTTON_LONG_PRESS`, `CAPSENSE_UPDATE` |
+| **System** (41-60) | `AIC_EVENT_IPC_CONNECTED`, `IPC_DISCONNECTED`, `IPC_MESSAGE`, `ERROR`, `WARNING`, `TIMER` |
+| **App** (61-80) | `AIC_EVENT_MODE_CHANGE`, `SETTING_CHANGE`, `UI_UPDATE`, `DATA_READY` |
+| **Custom** (81-100) | `AIC_EVENT_CUSTOM_1` to `CUSTOM_5` |
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `aic_event_init()` | Initialize event bus |
+| `aic_event_subscribe(event, cb, user_data)` | Subscribe to event |
+| `aic_event_unsubscribe(event, cb)` | Unsubscribe |
+| `aic_event_publish(event, data)` | Publish (queued, non-blocking) |
+| `aic_event_publish_immediate(event, data)` | Publish (blocking) |
+| `aic_event_process()` | Process queue (non-FreeRTOS) |
+
+### Publish Helpers
+
+| Function | Description |
+|----------|-------------|
+| `aic_event_publish_imu(ax,ay,az,gx,gy,gz)` | Publish IMU data |
+| `aic_event_publish_adc(ch, raw, mv)` | Publish ADC data |
+| `aic_event_publish_button(id, pressed)` | Publish button event |
+| `aic_event_publish_temp(centi)` | Publish temperature |
+
+### Example
+
+```c
+#include "aic_event.h"
+
+void on_button(aic_event_t ev, const aic_event_data_t *d, void *u) {
+    printf("Button %d: %s\n", d->button.button_id,
+           d->button.pressed ? "PRESS" : "RELEASE");
+}
+
+aic_event_init();
+aic_event_subscribe(AIC_EVENT_BUTTON_PRESS, on_button, NULL);
+aic_event_publish_button(AIC_BTN_USER, true);
+aic_event_process();  /* or use FreeRTOS task */
+```
+
+### Configuration
+
+| Define | Default | Description |
+|--------|---------|-------------|
+| `AIC_EVENT_MAX_SUBSCRIBERS` | 8 | Max subscribers per event |
+| `AIC_EVENT_QUEUE_SIZE` | 16 | Event queue depth |
+
+---
+
+## Module 9: aic_log.h - Logging System
+
+### Description
+
+Thread-safe, non-blocking logging system with queue-based output. Supports multiple output targets: printf (UART), IPC to CM33, and LVGL label.
+
+### Log Levels
+
+| Level | Macro | Description |
+|-------|-------|-------------|
+| `AIC_LOG_ERROR` | `AIC_LOGE()` | Error messages |
+| `AIC_LOG_WARN` | `AIC_LOGW()` | Warnings |
+| `AIC_LOG_INFO` | `AIC_LOGI()` | Informational |
+| `AIC_LOG_DEBUG` | `AIC_LOGD()` | Debug details |
+| `AIC_LOG_VERBOSE` | `AIC_LOGV()` | All details |
+
+### Output Targets
+
+| Target | Flag | Description |
+|--------|------|-------------|
+| printf | `AIC_LOG_TARGET_PRINTF` | Output to UART console |
+| IPC | `AIC_LOG_TARGET_IPC` | Forward to CM33 via IPC |
+| LVGL | `AIC_LOG_TARGET_LVGL` | Display on LVGL label |
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `aic_log_init()` | Initialize logging |
+| `aic_log_set_level(level)` | Set minimum log level |
+| `aic_log_set_targets(mask)` | Set output targets |
+| `aic_log(level, fmt, ...)` | Log message |
+| `aic_log_tag(level, tag, fmt, ...)` | Log with module tag |
+| `aic_log_flush()` | Flush queue (blocking) |
+| `aic_log_set_lvgl_label(label, max_lines)` | Set LVGL output label |
+
+### Tagged Logging
+
+```c
+/* In .c file */
+AIC_LOG_TAG("SENSOR");   /* Define module tag */
+
+LOGI("Init complete");           /* → [I][SENSOR] Init complete */
+LOGE("Read failed: %d", err);   /* → [E][SENSOR] Read failed: -1 */
+LOGD("ADC: %d mV", voltage);    /* → [D][SENSOR] ADC: 1650 mV */
+```
+
+### Example
+
+```c
+#include "aic_log.h"
+
+aic_log_init();
+aic_log_set_level(AIC_LOG_DEBUG);
+aic_log_set_targets(AIC_LOG_TARGET_PRINTF | AIC_LOG_TARGET_IPC);
+
+AIC_LOGI("System started");
+AIC_LOGD("ADC CH0 = %d", raw_value);
+AIC_LOGE("Sensor timeout!");
+
+aic_log_flush();  /* Wait for all messages to be output */
+```
+
+### Configuration
+
+| Define | Default | Description |
+|--------|---------|-------------|
+| `AIC_LOG_QUEUE_SIZE` | 16 | Queue depth |
+| `AIC_LOG_MSG_MAX_LEN` | 128 | Max message length |
+
+---
+
 ## Simulation Mode
 
 For UI development without hardware, enable simulation mode:
@@ -536,24 +765,17 @@ The `aic-eec` API automatically reads from shared memory on CM55.
 
 ## Used in Examples
 
-### Week 3 (LVGL + GPIO)
+### Part 1: LVGL Basics + GPIO (11 examples)
 
+- Ex1-5: UI widgets only (`aic-eec.h`, `aic_layout.h`)
 - Ex6-11: Uses `gpio.h` for LED/Button/PWM control
-
-### Week 4 (Sensor Visualization)
-
-- Ex7-11: Uses `sensors.h` and `tilt.h` for real sensor data
-- Complementary Filter for Roll/Pitch visualization
-
-### Week 5 (Oscilloscope)
-
-- Ex1-6: Uses `scope.h` for waveform generation and FFT
 
 ---
 
 ## License
 
-This SDK is developed for educational purposes at Burapha University.
+This SDK is developed for educational purposes.
+Department of Electrical Engineering, Faculty of Engineering, Burapha University.
 
 ---
 
@@ -566,5 +788,5 @@ This SDK is developed for educational purposes at Burapha University.
 ---
 
 > **(C) 2026 AIC-EEC.com**
-> **Embedded Systems Engineering, Faculty of Engineering, Burapha University**
+> **Embedded Systems and IoT Development, Department of Electrical Engineering, Faculty of Engineering, Burapha University**
 > **Assoc. Prof. Wiroon Sriborrirux** (wiroon@eng.buu.ac.th)
