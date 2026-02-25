@@ -21,11 +21,6 @@
 #include "wiced_bt_gatt.h"
 #include "wiced_bt_cfg.h"
 
-/* BT Configuration (auto-generated) */
-#include "../GeneratedSource/cycfg_bt_settings.h"
-#include "../GeneratedSource/cycfg_gap.h"
-#include "../GeneratedSource/cycfg_gatt_db.h"
-
 /* FreeRTOS */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -34,6 +29,89 @@
 /* Standard */
 #include <stdio.h>
 #include <string.h>
+
+/*******************************************************************************
+ * Local BT Configuration
+ *
+ * This project previously depended on auto-generated BT config headers
+ * (cycfg_bt_settings.h/cycfg_gap.h/cycfg_gatt_db.h). Those files are not
+ * present in this repository snapshot, so provide a minimal scanner-oriented
+ * runtime configuration here.
+ ******************************************************************************/
+
+static uint8_t bt_device_name[] = "AIC-EEC CM33-NS";
+
+static const wiced_bt_cfg_ble_scan_settings_t bt_scan_settings =
+{
+    .scan_mode = BTM_BLE_SCAN_MODE_PASSIVE,
+    .high_duty_scan_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_SCAN_INTERVAL,
+    .high_duty_scan_window = WICED_BT_CFG_DEFAULT_HIGH_DUTY_SCAN_WINDOW,
+    .high_duty_scan_duration = 5,
+    .low_duty_scan_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_SCAN_INTERVAL,
+    .low_duty_scan_window = WICED_BT_CFG_DEFAULT_LOW_DUTY_SCAN_WINDOW,
+    .low_duty_scan_duration = 60,
+    .high_duty_conn_scan_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_CONN_SCAN_INTERVAL,
+    .high_duty_conn_scan_window = WICED_BT_CFG_DEFAULT_HIGH_DUTY_CONN_SCAN_WINDOW,
+    .high_duty_conn_duration = 30,
+    .low_duty_conn_scan_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_CONN_SCAN_INTERVAL,
+    .low_duty_conn_scan_window = WICED_BT_CFG_DEFAULT_LOW_DUTY_CONN_SCAN_WINDOW,
+    .low_duty_conn_duration = 30,
+    .conn_min_interval = WICED_BT_CFG_DEFAULT_CONN_MIN_INTERVAL,
+    .conn_max_interval = WICED_BT_CFG_DEFAULT_CONN_MAX_INTERVAL,
+    .conn_latency = WICED_BT_CFG_DEFAULT_CONN_LATENCY,
+    .conn_supervision_timeout = WICED_BT_CFG_DEFAULT_CONN_SUPERVISION_TIMEOUT
+};
+
+static const wiced_bt_cfg_ble_advert_settings_t bt_adv_settings =
+{
+    .channel_map = BTM_BLE_ADVERT_CHNL_37 | BTM_BLE_ADVERT_CHNL_38 | BTM_BLE_ADVERT_CHNL_39,
+    .high_duty_min_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_ADV_MIN_INTERVAL,
+    .high_duty_max_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_ADV_MAX_INTERVAL,
+    .high_duty_duration = 30,
+    .low_duty_min_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_ADV_MIN_INTERVAL,
+    .low_duty_max_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_ADV_MAX_INTERVAL,
+    .low_duty_duration = 0,
+    .high_duty_directed_min_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_DIRECTED_ADV_MIN_INTERVAL,
+    .high_duty_directed_max_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_DIRECTED_ADV_MAX_INTERVAL,
+    .low_duty_directed_min_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_DIRECTED_ADV_MIN_INTERVAL,
+    .low_duty_directed_max_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_DIRECTED_ADV_MAX_INTERVAL,
+    .low_duty_directed_duration = 30,
+    .high_duty_nonconn_min_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_NONCONN_ADV_MIN_INTERVAL,
+    .high_duty_nonconn_max_interval = WICED_BT_CFG_DEFAULT_HIGH_DUTY_NONCONN_ADV_MAX_INTERVAL,
+    .high_duty_nonconn_duration = 30,
+    .low_duty_nonconn_min_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_NONCONN_ADV_MIN_INTERVAL,
+    .low_duty_nonconn_max_interval = WICED_BT_CFG_DEFAULT_LOW_DUTY_NONCONN_ADV_MAX_INTERVAL,
+    .low_duty_nonconn_duration = 0
+};
+
+static const wiced_bt_cfg_ble_t bt_ble_cfg =
+{
+    .ble_max_simultaneous_links = 1,
+    .ble_max_rx_pdu_size = 65,
+    .appearance = APPEARANCE_GENERIC_TAG,
+    .rpa_refresh_timeout = WICED_BT_CFG_DEFAULT_RANDOM_ADDRESS_CHANGE_TIMEOUT,
+    .host_addr_resolution_db_size = 3,
+    .p_ble_scan_cfg = &bt_scan_settings,
+    .p_ble_advert_cfg = &bt_adv_settings,
+    .default_ble_power_level = 0
+};
+
+static const wiced_bt_cfg_gatt_t bt_gatt_cfg =
+{
+    .max_db_service_modules = 0,
+    .max_eatt_bearers = 0
+};
+
+static const wiced_bt_cfg_settings_t cy_bt_cfg_settings =
+{
+    .device_name = bt_device_name,
+    .security_required = BTM_SEC_BEST_EFFORT,
+    .p_br_cfg = NULL,
+    .p_ble_cfg = &bt_ble_cfg,
+    .p_gatt_cfg = &bt_gatt_cfg,
+    .p_isoc_cfg = NULL,
+    .p_l2cap_app_cfg = NULL
+};
 
 /*******************************************************************************
  * Static Variables
@@ -90,9 +168,6 @@ static wiced_result_t bt_management_callback(wiced_bt_management_evt_t event,
 
                 /* Register GATT callback */
                 wiced_bt_gatt_register(bt_gatt_callback);
-
-                /* Initialize GATT Database */
-                wiced_bt_gatt_db_init(gatt_database, gatt_database_len, NULL);
 
                 /* Notify task that stack is ready */
                 if (bt_task_handle != NULL)
