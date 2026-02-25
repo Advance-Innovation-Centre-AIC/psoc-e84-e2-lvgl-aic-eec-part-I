@@ -38,9 +38,6 @@
 /* WiFi Task */
 #include "source/wifi_task.h"
 
-/* Bluetooth Task */
-#include "source/bt_task.h"
-
 /* CAPSENSE Module (read via I2C, send via IPC) */
 #include "source/capsense_task.h"
 
@@ -384,12 +381,7 @@ int main(void)
                 WIFI_TASK_STACK_SIZE, NULL,
                 WIFI_TASK_PRIORITY, NULL);
 
-    /* Bluetooth Task: BLE scanning and connection management */
-    xTaskCreate(bt_task, "BT Task",
-                BT_TASK_STACK_SIZE, NULL,
-                BT_TASK_PRIORITY, NULL);
-
-    printf("[CM33] Starting FreeRTOS scheduler...\r\n\r\n");
+        printf("[CM33] Starting FreeRTOS scheduler...\r\n\r\n");
 
     /* Start FreeRTOS scheduler - does not return */
     vTaskStartScheduler();
@@ -403,3 +395,4 @@ int main(void)
 
 
 /* [] END OF FILE */
+

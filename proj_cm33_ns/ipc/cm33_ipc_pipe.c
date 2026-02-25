@@ -17,9 +17,7 @@
 
 /* WiFi task for routing WiFi IPC commands */
 #include "../source/wifi_task.h"
-
-/* BT task for routing BT IPC commands */
-#include "../source/bt_task.h"
+#include "../../shared/bt_shared.h"
 
 /* CAPSENSE module for routing CAPSENSE IPC commands */
 #include "../source/capsense_task.h"
@@ -259,13 +257,13 @@ void cm33_ipc_process(void)
                 wifi_task_queue_cmd(&msg);
                 break;
 
-            /* Bluetooth Commands (0xE0-0xEF) - Route to BT task */
+            /* Bluetooth Commands (0xE0-0xEF) - BT feature disabled */
             case IPC_CMD_BT_SCAN_START:
             case IPC_CMD_BT_CONNECT:
             case IPC_CMD_BT_DISCONNECT:
             case IPC_CMD_BT_STATUS:
             case IPC_CMD_BT_GET_HARDWARE:
-                bt_task_queue_cmd(&msg);
+                cm33_ipc_send_cmd(IPC_CMD_BT_ERROR, BT_ERR_NOT_READY);
                 break;
 
             /* CAPSENSE request - respond with current state */
@@ -389,3 +387,5 @@ void cm33_ipc_reset_stats(void)
     rx_count = 0;
     error_count = 0;
 }
+
+

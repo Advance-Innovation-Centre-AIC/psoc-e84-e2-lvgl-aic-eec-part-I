@@ -53,7 +53,7 @@ VERBOSE=
 # ... then code in directories named COMPONENT_foo and COMPONENT_bar will be
 # added to the build
 #
-COMPONENTS+= FREERTOS LWIP MBEDTLS WICED_BLE
+COMPONENTS+= FREERTOS LWIP MBEDTLS
 
 # Like COMPONENTS, but disable optional code that was enabled by default.
 DISABLE_COMPONENTS=
@@ -78,8 +78,17 @@ MBEDTLSFLAGS = MBEDTLS_USER_CONFIG_FILE='"configs/mbedtls_user_config.h"'
 
 # Add additional defines to the build process (without a leading -D).
 DEFINES+=$(MBEDTLSFLAGS) CYBSP_WIFI_CAPABLE CY_RETARGET_IO_CONVERT_LF_TO_CRLF CY_RTOS_AWARE
-# BT feature baud rate (3M for faster firmware download)
+
+# Bluetooth is intentionally disabled for this course project to simplify setup.
+# Keep bt_task sources in repository but exclude them from the build.
+CY_IGNORE+=source/bt_task.c source/bt_task.h
+# Compatibility defines for bundled btstack-integration middleware.
+# BT task is disabled, but these keep middleware sources buildable.
+DEFINES+=CYBSP_BT_PLATFORM_CFG_MEM_POOL_BYTES=2048
+DEFINES+=CYBSP_BT_PLATFORM_CFG_SLEEP_MODE_LP_ENABLED=1
 DEFINES+=CYBSP_BT_PLATFORM_CFG_BAUD_FEATURE=3000000
+DEFINES+=CYBSP_BT_PLATFORM_CFG_BAUD_DOWNLOAD=3000000
+DEFINES+=CYBSP_BT_PLATFORM_CFG_FLOW_CONTROL_ENABLE=1
 
 # Default configuration of mbedtls library.
 DEFINES+=MBEDTLS_CONFIG_FILE='"mbedtls/mbedtls_config.h"'
@@ -146,3 +155,6 @@ CY_GETLIBS_SHARED_PATH=../..
 CY_GETLIBS_SHARED_NAME=mtb_shared
 
 include $(CY_TOOLS_DIR)/make/start.mk
+
+
+
