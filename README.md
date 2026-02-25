@@ -64,6 +64,15 @@ Edit `proj_cm55/example_selector.h`:
 
 ## Build & Program
 
+### First-Time Setup (Important)
+
+```bash
+# Run once after clone
+make getlibs
+```
+
+On Windows, run commands in ModusToolbox shell (or via `bash.exe -lc`) to avoid missing tool errors.
+
 ```bash
 # Build all cores
 make build
@@ -191,6 +200,20 @@ Unplug and replug USB to ensure PSoC 4000T boots into application mode.
 Use GCC_ARM instead:
 ```bash
 make build TOOLCHAIN=GCC_ARM
+```
+
+### Build fails with "Libraries ... not found"
+
+Dependencies are not downloaded yet:
+```bash
+make getlibs
+```
+
+### Build fails with "make: command not found" (Windows PowerShell)
+
+Use ModusToolbox shell, or run with full path:
+```powershell
+C:/Users/<your-user>/ModusToolbox/tools_3.7/modus-shell/bin/bash.exe -lc "make build TOOLCHAIN=GCC_ARM"
 ```
 
 ### CM33-NS printf causes crash
